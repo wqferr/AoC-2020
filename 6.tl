@@ -1,4 +1,3 @@
-
 local record Set
     values: {string: boolean}
 
