@@ -1,30 +1,27 @@
-local record Set
-    values: {any: boolean}
-
-    new: function(elements: {any}): Set
-    add: function(Set, any)
-    contains: function(Set, any): boolean
-    union: function(Set, Set): Set
-    intersection: function(Set, Set): Set
-    size: function(Set): number
+local record Set<T>
+    values: {T: boolean}
 end
 local SetMt = {__index = Set}
 
-function Set.new(): Set
-    local s: Set = setmetatable({}, SetMt)
+function Set.new<T>(): Set<T>
+    local s: Set<T> = setmetatable({}, SetMt)
     s.values = {}
     return s
 end
 
-function Set:add(e: any)
+function Set:add<T>(e: T)
     self.values[e] = true
 end
 
-function Set:contains(e: any): boolean
+function Set:remove<T>(e: T)
+    self.values[e] = nil
+end
+
+function Set:contains<T>(e: T): boolean
     return self.values[e]
 end
 
-function Set:union(other: Set): Set
+function Set:union<T>(other: Set<T>): Set<T>
     local new = Set.new()
     for e, _ in pairs(self.values) do
         new:add(e)
@@ -35,7 +32,7 @@ function Set:union(other: Set): Set
     return new
 end
 
-function Set:intersection(other: Set): Set
+function Set:intersection<T>(other: Set<T>): Set<T>
     local new = Set.new()
     for e, _ in pairs(self.values) do
         if other:contains(e) then
@@ -45,14 +42,14 @@ function Set:intersection(other: Set): Set
     return new
 end
 
-function Set:pop(): any
+function Set:pop<T>(): T
     for k, v in pairs(self.values) do
         if v then
             self.values[k] = nil
             return k
         end
     end
-    error('No element to pop', 2)
+    return nil
 end
 
 function Set:size(): number
@@ -67,14 +64,14 @@ function Set:empty(): boolean
     return next(self.values) == nil
 end
 
-function Set:iter(): function(), nil, nil
-    local curr_key: any = nil
-    local function _iter(): any
+function Set:iter<T>(): (function(): T)
+    local curr_key: T = nil
+    local function _iter(): T
         curr_key = next(self.values, curr_key)
         return curr_key
     end
 
-    return _iter, nil, nil
+    return _iter
 end
 
 return Set
