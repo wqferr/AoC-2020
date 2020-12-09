@@ -1,9 +1,9 @@
 local record Set
-    values: {string: boolean}
+    values: {any: boolean}
 
-    new: function(elements: {string}): Set
-    add: function(Set, string)
-    contains: function(Set, string): boolean
+    new: function(elements: {any}): Set
+    add: function(Set, any)
+    contains: function(Set, any): boolean
     union: function(Set, Set): Set
     intersection: function(Set, Set): Set
     size: function(Set): number
@@ -16,11 +16,11 @@ function Set.new(): Set
     return s
 end
 
-function Set:add(e: string)
+function Set:add(e: any)
     self.values[e] = true
 end
 
-function Set:contains(e: string): boolean
+function Set:contains(e: any): boolean
     return self.values[e]
 end
 
@@ -45,10 +45,10 @@ function Set:intersection(other: Set): Set
     return new
 end
 
-function Set:pop(): string
+function Set:pop(): any
     for k, v in pairs(self.values) do
         if v then
-            self.values[k] = false
+            self.values[k] = nil
             return k
         end
     end
@@ -58,20 +58,23 @@ end
 function Set:size(): number
     local size = 0
     for k, v in pairs(self.values) do
-        if v then
-            size = size + 1
-        end
+        size = size + 1
     end
     return size
 end
 
 function Set:empty(): boolean
-    for k, v in pairs(self.values) do
-        if v then
-            return false
-        end
+    return next(self.values) == nil
+end
+
+function Set:iter(): function(), nil, nil
+    local curr_key: any = nil
+    local function _iter(): any
+        curr_key = next(self.values, curr_key)
+        return curr_key
     end
-    return true
+
+    return _iter, nil, nil
 end
 
 return Set
