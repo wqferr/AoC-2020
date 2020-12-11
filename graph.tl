@@ -41,6 +41,20 @@ function Graph:add_vertex<T>(id: T)
     self.n_vertices = self.n_vertices + 1
 end
 
+function Graph:has_vertex<T>(id: T): boolean
+    return self.vertices[id] ~= nil
+end
+
+function Graph:iter_vertices<T>(): (function(): T)
+    local cur: T = nil
+    local function _iter(): T
+        cur = next(self.vertices, cur)
+        return cur
+    end
+
+    return _iter
+end
+
 local function _get_vertex_or_error<T>(g: Graph<T>, id: T): Graph.Vertex
     local v = g.vertices[id]
     if v then
